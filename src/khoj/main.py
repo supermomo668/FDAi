@@ -31,10 +31,9 @@ import schedule
 from django.core.asgi import get_asgi_application
 from django.core.management import call_command
 
-load_envvar_version = load_dotenv("env")
 load_envvars = load_dotenv(
     f".envs/{os.getenv('ENV_VERSION', 'default')}")
-assert load_envvar_version and load_envvars, "Did not load env vars from env & .envs/*"
+assert load_envvars, "Did not load env vars from .envs/*"
 # Initialize Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "khoj.app.settings")
 django.setup()
@@ -51,10 +50,10 @@ with redirect_stdout(collectstatic_output):
 
 # Initialize the Application Server
 if in_debug_mode():
-    app = FastAPI(debug=True)
+    app = FastAPI(debug=True, docs_url="/docs")
 else:
     # app = FastAPI(docs_url=None)  # Disable Swagger UI in production
-    app = FastAPI()  
+    app = FastAPI(docs_url="/docs")  
 
 # Get Django Application
 django_app = get_asgi_application()
@@ -70,12 +69,7 @@ app.add_middleware(
         "http://localhost:*",
         "http://127.0.0.1:*",
         f"https://{KHOJ_DOMAIN}",
-        "app://khoj.dev",
         "http://localhost:3000",
-        "https://certainly-inspired-duck.ngrok-free.app",
-        "https://direct-lacewing-merry.ngrok-free.app",
-        "http://chat-interface:3000",
-        "https://fdai-helper-agent.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
