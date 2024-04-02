@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from khoj.utils.helpers import in_debug_mode
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -100,16 +101,9 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+print(f"Configuration Database connections.")
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
-        "PORT": os.getenv("POSTGRES_PORT", "5432"),
-        "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "NAME": os.getenv("POSTGRES_DB", "khoj"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
-    }
+    'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
 }
 
 # User Settings

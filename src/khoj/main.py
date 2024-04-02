@@ -2,36 +2,39 @@
    isort:skip_file
 """
 
-
+# Standard Packages
 from contextlib import redirect_stdout
 import io
 import os
 import sys
 import locale
 
+from dotenv import load_dotenv
 import logging
 import threading
 import warnings
 from importlib.metadata import version
 
-from khoj.utils.helpers import in_debug_mode
+from utils.helpers import in_debug_mode
 
 # Ignore non-actionable warnings
 warnings.filterwarnings("ignore", message=r"snapshot_download.py has been made private", category=FutureWarning)
 warnings.filterwarnings("ignore", message=r"legacy way to download files from the HF hub,", category=FutureWarning)
-
 
 import uvicorn
 import django
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from rich.logging import RichHandler
 import schedule
 
 from django.core.asgi import get_asgi_application
 from django.core.management import call_command
 
+load_envvar_version = load_dotenv("env")
+load_envvars = load_dotenv(
+    f".envs/{os.getenv('ENV_VERSION', 'default')}")
+assert load_envvar_version and load_envvars, "Did not load env vars from env & .envs/*"
 # Initialize Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "khoj.app.settings")
 django.setup()
@@ -50,7 +53,8 @@ with redirect_stdout(collectstatic_output):
 if in_debug_mode():
     app = FastAPI(debug=True)
 else:
-    app = FastAPI(docs_url=None)  # Disable Swagger UI in production
+    # app = FastAPI(docs_url=None)  # Disable Swagger UI in production
+    app = FastAPI()  
 
 # Get Django Application
 django_app = get_asgi_application()
@@ -67,6 +71,11 @@ app.add_middleware(
         "http://127.0.0.1:*",
         f"https://{KHOJ_DOMAIN}",
         "app://khoj.dev",
+        "http://localhost:3000",
+        "https://certainly-inspired-duck.ngrok-free.app",
+        "https://direct-lacewing-merry.ngrok-free.app",
+        "http://chat-interface:3000",
+        "https://fdai-helper-agent.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -76,21 +85,23 @@ app.add_middleware(
 # Set Locale
 locale.setlocale(locale.LC_ALL, "")
 
-# We import these packages after setting up Django so that Django features are accessible to the app.
+# Internal Packages. We do this after setting up Django so that Django features are accessible to the app.
 from khoj.configure import configure_routes, initialize_server, configure_middleware
 from khoj.utils import state
 from khoj.utils.cli import cli
 from khoj.utils.initialization import initialization
 
 # Setup Logger
-rich_handler = RichHandler(rich_tracebacks=True)
-rich_handler.setFormatter(fmt=logging.Formatter(fmt="%(message)s", datefmt="[%H:%M:%S.%f]"))
-logging.basicConfig(handlers=[rich_handler])
-
-logger = logging.getLogger("khoj")
-
+import log_configs
+logger = log_configs.logger
+# logger = logging.getLogger("khoj")
 
 def run(should_start_server=True):
+    """
+    A function that runs the main logic of the program. It initializes various settings, logs initialization steps, creates necessary directories, sets up logging, starts the server, configures routes, mounts necessary directories, configures middleware, and finally starts the server based on the provided arguments.
+    Parameters:
+    - should_start_server: a boolean indicating whether the server should be started.
+    """
     # Turn Tokenizers Parallelism Off. App does not support it.
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -108,7 +119,18 @@ def run(should_start_server=True):
     logger.info(f"🚒 Initializing Khoj v{state.khoj_version}")
     logger.info(f"📦 Initializing DB:\n{db_migrate_output.getvalue().strip()}")
     logger.debug(f"🌍 Initializing Web Client:\n{collectstatic_output.getvalue().strip()}")
+    # initialize Chat configuration based on the `ChatModelObject`
+    """
+    class ChatModelOptions(BaseModel):
+    class ModelType(models.TextChoices):
+        OPENAI = "openai"
+        OFFLINE = "offline"
 
+    max_prompt_size = models.IntegerField(default=None, null=True, blank=True)
+    tokenizer = models.CharField(max_length=200, default=None, null=True, blank=True)
+    chat_model = models.CharField(max_length=200, default="mistral-7b-instruct-v0.1.Q4_0.gguf")
+    model_type = models.CharField(max_length=200, choices=ModelType.choices, default=ModelType.OFFLINE)
+    """
     initialization()
 
     # Create app directory, if it doesn't exist
@@ -143,7 +165,7 @@ def run(should_start_server=True):
     if should_start_server:
         start_server(app, host=args.host, port=args.port, socket=args.socket)
 
-
+# Set State for application
 def set_state(args):
     state.config_file = args.config_file
     state.config = args.config
@@ -155,14 +177,12 @@ def set_state(args):
     state.chat_on_gpu = args.chat_on_gpu
 
 
-def start_server(app, host=None, port=None, socket=None):
+def start_server(app, host=None, port=None, socket=None, reload=False):
     logger.info("🌖 Khoj is ready to use")
     if socket:
-        uvicorn.run(app, proxy_headers=True, uds=socket, log_level="debug", use_colors=True, log_config=None)
+        uvicorn.run(app, proxy_headers=True, uds=socket, log_level="debug", use_colors=True, log_config=None, reload=reload)
     else:
-        uvicorn.run(
-            app, host=host, port=port, log_level="debug", use_colors=True, log_config=None, timeout_keep_alive=60
-        )
+        uvicorn.run(app, host=host, port=port, log_level="debug", use_colors=True, log_config=None, reload=reload)
     logger.info("🌒 Stopping Khoj")
 
 
