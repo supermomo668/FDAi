@@ -57,5 +57,20 @@ Set-up production version quickly by specifying the following key parameters. (m
   - Data Entry
       - In `search_type/constants.py` you may modify which user is used for entry retrievers. It could be the user-self or a fixed index user
   
-  
+* Fixing a common entry user
+  - The entrypoint: [`TextSearch`](../src/khoj/search_type/), which contains the following searches where you can configure specific behaviors:
+    ```
+    search_type_to_embeddings_type = {
+      SearchType.Org.value: DbEntry.EntryType.ORG,
+      SearchType.Markdown.value: DbEntry.EntryType.MARKDOWN,
+      SearchType.Plaintext.value: DbEntry.EntryType.PLAINTEXT,
+      SearchType.Pdf.value: DbEntry.EntryType.PDF,
+      SearchType.Github.value: DbEntry.EntryType.GITHUB,
+      SearchType.Notion.value: DbEntry.EntryType.NOTION,
+      SearchType.All.value: None,
+    }
+    ```
     
+    * For GitHub, it's going to be [here](../src/khoj/search_type/text_search.py)
+    
+  - Added a fix entryuser for different search type in [`settings.py`](../src/khoj/routers/)
