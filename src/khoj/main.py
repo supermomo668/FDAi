@@ -33,7 +33,7 @@ from django.core.management import call_command
 
 load_envvars = load_dotenv(
     f".envs/{os.getenv('ENV_VERSION', 'default')}")
-assert load_envvars, "Did not load env vars from .envs/*"
+assert load_envvars, f"Did not load env vars from .envs/{os.getenv('ENV_VERSION', 'default')}"
 # Initialize Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "khoj.app.settings")
 django.setup()

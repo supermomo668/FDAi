@@ -23,7 +23,7 @@ async def getStaffUser(
 from khoj.utils.state import SearchType
 # Fix based on search types
 
-async def entry_admin_users():
+async def get_entry_admin_users():
     return {
     SearchType.Org.value: False,
     SearchType.Markdown.value: False,

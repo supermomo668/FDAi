@@ -1,21 +1,24 @@
 version: "3.9"
 services:
-  pgbouncer:
-    image: edoburu/pgbouncer:latest
+  database:
+    image: ankane/pgvector
     ports:
-      - "6432:6432" # PgBouncer listening port
-    env_file: .pgbouncer.dev.env
+      - "5432:5432"
     environment:
-      # PgBouncer settings, adjust according to your needs
-      POOL_MODE: transaction
-      # AUTH_TYPE: scram-sha-256
-      LISTEN_PORT: 6432
-    networks: 
-      - khoj
-      
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - khoj_db:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
   server:
-    # depends_on: 
-    #   - pgbouncer
+    depends_on:
+      database:
+        condition: service_healthy
     # Use the following line to use the latest version of khoj. Otherwise, it will build from source.
     # image: ghcr.io/khoj-ai/khoj:latest
     # Uncomment the following line to build from source. This will take a few minutes. Comment the next two lines out if you want to use the offiicial image.
@@ -32,16 +35,13 @@ services:
       - khoj_config:/root/.khoj/
       - khoj_models:/root/.cache/torch/sentence_transformers
     # Use 0.0.0.0 to explicitly set the host ip for the service on the container. https://pythonspeed.com/articles/docker-connection-refused/
-    environment:
-      - ENV_VERSION=test
     env_file: .env
+    environment: 
+      - ENV_VERSION=local
     command: --host="0.0.0.0" --port=42111 -vv --anonymous-mode
-    networks: 
-      - khoj
 
-networks:
-  khoj:
- 
+
 volumes:
   khoj_config:
+  khoj_db:
   khoj_models:

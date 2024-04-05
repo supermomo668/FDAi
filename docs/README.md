@@ -58,7 +58,9 @@ Set-up production version quickly by specifying the following key parameters. (m
       - In `search_type/constants.py` you may modify which user is used for entry retrievers. It could be the user-self or a fixed index user
   
 * Fixing a common entry user
-  - The entrypoint: [`TextSearch`](../src/khoj/search_type/), which contains the following searches where you can configure specific behaviors:
+  - Added a fix entryuser for different search type in [`settings.py`](../src/khoj/settings.py)
+  
+  1. The entrypoint: [`TextSearch`](../src/khoj/search_type/), which contains the following searches where you can configure specific behaviors:
     ```
     search_type_to_embeddings_type = {
       SearchType.Org.value: DbEntry.EntryType.ORG,
@@ -71,6 +73,19 @@ Set-up production version quickly by specifying the following key parameters. (m
     }
     ```
     
-    * For GitHub, it's going to be [here](../src/khoj/search_type/text_search.py)
-    
-  - Added a fix entryuser for different search type in [`settings.py`](../src/khoj/routers/)
+    * For GitHub's retriever, it's going to be [here](../src/khoj/search_type/text_search.py)
+  
+  2. The indexer user also needs to be modified to the entry user at [`indexer.py`](../src/khoj/indexer.py)
+    ```
+    def configure_content(
+        content_index: Optional[ContentIndex],
+        content_config: Optional[ContentConfig],
+        files: Optional[dict[str, dict[str, str]]],
+        search_models: SearchModels,
+        regenerate: bool = False,
+        t: Optional[state.SearchType] = state.SearchType.All,
+        full_corpus: bool = True,
+        user: KhojUser = None,
+    ) -> tuple[Optional[ContentIndex], bool]:
+        content_index = ContentIndex()
+    ```

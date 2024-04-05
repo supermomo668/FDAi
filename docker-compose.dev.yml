@@ -26,16 +26,19 @@ services:
       # If changing the remote port (right hand side),
       #   change the port in the args in the build section,
       #   as well as the port in the command section to match
-      - "42111:42111"
+      - "42110:42110"
     working_dir: /app
     volumes:
       - khoj_config:/root/.khoj/
       - khoj_models:/root/.cache/torch/sentence_transformers
     # Use 0.0.0.0 to explicitly set the host ip for the service on the container. https://pythonspeed.com/articles/docker-connection-refused/
     environment:
-      - ENV_VERSION=test
-    env_file: .env
-    command: --host="0.0.0.0" --port=42111 -vv --anonymous-mode
+      - ENV_VERSION=dev
+      - KHOJ_DJANGO_SECRET_KEY=secret
+      - KHOJ_DEBUG=true
+      - KHOJ_ADMIN_EMAIL=username@example.com
+      - KHOJ_ADMIN_PASSWORD=password
+    command: --host="0.0.0.0" --port=42110 -vv --anonymous-mode
     networks: 
       - khoj
 
