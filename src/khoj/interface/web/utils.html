@@ -1,7 +1,7 @@
 {% macro heading_pane(user_photo, username, is_active, has_documents) -%}
     <div class="khoj-header">
         <a class="khoj-logo" href="/">
-            <img class="khoj-logo" src="/static/assets/icons/khoj-logo-sideways-500.png?v={{ khoj_version }}" alt="Khoj"></img>
+            <img class="khoj-logo" src="/static/assets/icons/fdai-logo-sideways-500.png" alt="FDAi"></img>
         </a>
         <nav class="khoj-nav">
             <a id="agents-nav" class="khoj-nav" href="/agents">Agents</a>
@@ -9,7 +9,7 @@
             <a id="search-nav" class="khoj-nav" href="/search">Search</a>
             {% endif %}
             <!-- Dropdown Menu -->
-            {% if username %}
+            <!-- {% if username %}
                 <div id="khoj-nav-menu-container" class="khoj-nav dropdown">
                     {% if user_photo and user_photo != "None" %}
                         {% if is_active %}
@@ -27,7 +27,7 @@
                     <div id="khoj-nav-menu" class="khoj-nav-dropdown-content">
                         <div class="khoj-nav-username"> {{ username }} </div>
                         <a id="settings-nav" class="khoj-nav" href="/config">⚙️ Settings</a>
-                        <a class="khoj-nav" href="/auth/logout">🔑 Logout</a>
+                        <a class="khoj-nav" href="/auth/logout">🔑 Logout</a> -->
                     </div>
                 </div>
             {% endif %}

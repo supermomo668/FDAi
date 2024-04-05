@@ -1,17 +1,17 @@
 version: "3.9"
 services:
-  pgbouncer:
-    image: edoburu/pgbouncer:latest
-    ports:
-      - "6432:6432" # PgBouncer listening port
-    env_file: .pgbouncer.dev.env
-    environment:
-      # PgBouncer settings, adjust according to your needs
-      POOL_MODE: transaction
-      # AUTH_TYPE: scram-sha-256
-      LISTEN_PORT: 6432
-    networks: 
-      - khoj
+  # pgbouncer:
+  #   image: edoburu/pgbouncer:latest
+  #   ports:
+  #     - "6432:6432" # PgBouncer listening port
+  #   env_file: .pgbouncer.dev.env
+  #   environment:
+  #     # PgBouncer settings, adjust according to your needs
+  #     POOL_MODE: transaction
+  #     # AUTH_TYPE: scram-sha-256
+  #     LISTEN_PORT: 6432
+  #   networks: 
+  #     - khoj
       
   server:
     # depends_on: 
@@ -34,10 +34,7 @@ services:
     # Use 0.0.0.0 to explicitly set the host ip for the service on the container. https://pythonspeed.com/articles/docker-connection-refused/
     environment:
       - ENV_VERSION=dev
-      - KHOJ_DJANGO_SECRET_KEY=secret
-      - KHOJ_DEBUG=true
-      - KHOJ_ADMIN_EMAIL=username@example.com
-      - KHOJ_ADMIN_PASSWORD=password
+    env_file: .env
     command: --host="0.0.0.0" --port=42110 -vv --anonymous-mode
     networks: 
       - khoj
