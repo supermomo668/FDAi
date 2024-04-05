@@ -76,6 +76,8 @@ dependencies = [
     "phonenumbers == 8.13.27",
     "markdownify ~= 0.11.6",
     "websockets == 12.0",
+    "dj-database-url",
+    "python-dotenv"
 ]
 dynamic = ["version"]
 

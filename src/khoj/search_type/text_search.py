@@ -18,6 +18,9 @@ from khoj.utils.models import BaseEncoder
 from khoj.utils.rawconfig import Entry, SearchResponse
 from khoj.utils.state import SearchType
 
+# additional import to fix a user for other users
+from khoj.index_settings import get_entry_admin_users
+
 logger = logging.getLogger(__name__)
 
 search_type_to_embeddings_type = {
@@ -107,7 +110,9 @@ async def query(
     file_type = search_type_to_embeddings_type[type.value]
 
     query = raw_query
-
+    entry_admin_users = await get_entry_admin_users()
+    if await entry_admin_users.get(type):
+        user = entry_admin_users.get(type)
     # Encode the query using the bi-encoder
     if question_embedding is None:
         with timer("Query Encode Time", logger, state.device):

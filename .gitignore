@@ -11,9 +11,10 @@ __pycache__
 *.py[cod]
 .vscode
 .env
+.envs/*
 .venv/*
 todesktop.json
-
+.pgbouncer.*
 # Build artifacts
 /src/khoj/interface/web/images
 /build/

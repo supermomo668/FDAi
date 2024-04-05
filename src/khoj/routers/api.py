@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 conversation_command_rate_limiter = ConversationCommandRateLimiter(
     trial_rate_limit=2, subscribed_rate_limit=100, slug="command"
 )
-
+    
 
 @api.get("/search", response_model=List[SearchResponse])
 @requires(["authenticated"])
@@ -301,7 +301,6 @@ async def extract_references_and_questions(
     location_data: LocationData = None,
 ):
     user = request.user.object if request.user.is_authenticated else None
-
     # Initialize Variables
     compiled_references: List[Any] = []
     inferred_queries: List[str] = []
