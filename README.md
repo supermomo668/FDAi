@@ -57,6 +57,23 @@ You can see the full feature list [here](https://docs.khoj.dev/category/features
 
 To get started with self-hosting Khoj, [read the docs](https://docs.khoj.dev/get-started/setup).
 
+### How to use the deployment files [FDAi]
+Stages of docker compose:
+* local
+* dev
+* test x 2
+  - `test.db`
+      * Test a production database 
+  - `test` 
+      *   Using PgBouncer (Same as prod except for debug)
+* prod
+  - production ready if previous tests pass
+  
+General start-up command
+```
+sudo docker compose -f docker-compose.<stage>.yml up --build
+```
+
 ## Contributors
 Cheers to our awesome contributors! 🎉
 

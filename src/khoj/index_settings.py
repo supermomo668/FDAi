@@ -20,6 +20,7 @@ async def getStaffUser(
         raise KhojUserNotFound(f"Staff user with username {username} not found.")
     return user_query
 
+
 from khoj.utils.state import SearchType
 # Fix based on search types
 
@@ -29,7 +30,9 @@ async def get_entry_admin_users():
     SearchType.Markdown.value: False,
     SearchType.Plaintext.value: False,
     SearchType.Pdf.value: False,
-    SearchType.Github.value: await getStaffUser(os.getenv("GITHUB_ENTRY_ADMIN")) if os.getenv("GITHUB_ENTRY_ADMIN") else False,
+    SearchType.Github.value: await getStaffUser(
+        os.getenv("GITHUB_ENTRY_ADMIN")
+        ) if os.getenv("GITHUB_ENTRY_ADMIN") else False,
     SearchType.Notion.value: False,
     SearchType.All.value: False,
 }

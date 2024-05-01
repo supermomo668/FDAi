@@ -1,0 +1,14 @@
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=master
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+KHOJ_DJANGO_SECRET_KEY=secret
+KHOJ_DEBUG=False
+KHOJ_ADMIN_EMAIL=email
+KHOJ_ADMIN_PASSWORD=password
+KHOJ_DOMAIN=<your_something.com>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+OPENAI_API_KEY=<YOUR_OPEN_AI_KEY>
+ENTRYSTORE_ADMIN_USERNAME=<username of users where index of github/other entries are stores across user>

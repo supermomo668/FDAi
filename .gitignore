@@ -12,6 +12,7 @@ __pycache__
 .vscode
 .env
 .envs/*
+!.envs/example
 .venv/*
 todesktop.json
 .pgbouncer.*

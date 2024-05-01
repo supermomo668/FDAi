@@ -38,6 +38,8 @@ if not state.anonymous_mode:
         requirements_string = "\n   - " + "\n   - ".join(missing_requirements)
         error_msg = f"🚨 Start Khoj with --anonymous-mode flag or to enable authentication:{requirements_string}"
         logger.error(error_msg)
+        if os.getenv("ENV_VERSION")=="prod":
+            raise error_msg
 
     config = Config(environ=os.environ)
 
@@ -90,6 +92,7 @@ async def delete_token(request: Request, token: str) -> str:
 
 @auth_router.post("/redirect")
 async def auth(request: Request):
+    from google.oauth2 import id_token
     form = await request.form()
     next_url = request.query_params.get("next", "/")
     credential = form.get("credential")

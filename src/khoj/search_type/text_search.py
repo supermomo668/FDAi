@@ -111,8 +111,8 @@ async def query(
 
     query = raw_query
     entry_admin_users = await get_entry_admin_users()
-    if await entry_admin_users.get(type):
-        user = entry_admin_users.get(type)
+    # if await entry_admin_users.get(type):
+    #     user = entry_admin_users.get(type)
     # Encode the query using the bi-encoder
     if question_embedding is None:
         with timer("Query Encode Time", logger, state.device):

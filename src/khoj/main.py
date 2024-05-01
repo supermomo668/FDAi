@@ -15,11 +15,17 @@ import threading
 import warnings
 from importlib.metadata import version
 
-from utils.helpers import in_debug_mode
+from khoj.utils.helpers import in_debug_mode
 
 # Ignore non-actionable warnings
-warnings.filterwarnings("ignore", message=r"snapshot_download.py has been made private", category=FutureWarning)
-warnings.filterwarnings("ignore", message=r"legacy way to download files from the HF hub,", category=FutureWarning)
+warnings.filterwarnings(
+    "ignore", 
+    message=r"snapshot_download.py has been made private", 
+    category=FutureWarning)
+warnings.filterwarnings(
+    "ignore", 
+    message=r"legacy way to download files from the HF hub,", 
+    category=FutureWarning)
 
 import uvicorn
 import django
@@ -86,8 +92,8 @@ from khoj.utils.cli import cli
 from khoj.utils.initialization import initialization
 
 # Setup Logger
-import log_configs
-logger = log_configs.logger
+from khoj.log_configs import logger
+
 # logger = logging.getLogger("khoj")
 
 def run(should_start_server=True):
