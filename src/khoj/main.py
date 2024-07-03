@@ -38,8 +38,9 @@ from django.core.asgi import get_asgi_application
 from django.core.management import call_command
 
 load_envvars = load_dotenv(
-    f".envs/{os.getenv('ENV_VERSION', 'default')}")
-assert load_envvars, f"Did not load env vars from .envs/{os.getenv('ENV_VERSION', 'default')}"
+    f".envs/{os.getenv('ENV_VERSION')}", override=True)
+assert load_envvars, f"Did not load env vars from .envs. Please specify ENV_VERSION variable"
+assert os.path.exists(f".envs/{os.getenv('ENV_VERSION')}")
 # Initialize Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "khoj.app.settings")
 django.setup()

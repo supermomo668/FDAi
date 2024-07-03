@@ -16,9 +16,12 @@ from pathlib import Path
 from khoj.utils.helpers import in_debug_mode
 import dj_database_url
 
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# export ENV_VERSION environment variables
+load_dotenv(f".envs/{os.getenv('ENV_VERSION', 'dev')}.env", override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -101,7 +104,9 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-print(f"Configuration Database connections.")
+print(f"Configuring Database connections via database URL...")
+assert os.environ['DATABASE_URL'], "DATABASE_URL variable must be exported"
+print(f"Connecting to database with configuration: {dj_database_url.config(default=os.environ['DATABASE_URL'])}")
 DATABASES = {
     'default': dj_database_url.config(default=os.environ['DATABASE_URL'])
 }

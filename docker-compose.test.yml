@@ -1,10 +1,19 @@
 version: "3.9"
 services:
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    ports:
+      - "6432:6432" # PgBouncer listening port
+    env_file: .pgbouncer.test.env
+    networks:
+      - default
+      
   server:
     # Use the following line to use the latest version of khoj. Otherwise, it will build from source.
     # image: ghcr.io/khoj-ai/khoj:latest
     build:
       context: .
+      dockerfile: Dockerfile
     ports:
       - "42110:42110"
     working_dir: /app
@@ -14,24 +23,16 @@ services:
     env_file: .env
     environment:
       # Important variable: env version
-      - ENV_VERSION=test.db
+      - ENV_VERSION=test.pgbouncer
       - port=42110
     command: --host="0.0.0.0" --port=42110 -vv --anonymous-mode
-    depends_on:
-      - pgbouncer
+    # depends_on:
+    #   - pgbouncer
     networks:
-      - khoj
-      
-  pgbouncer:
-    image: edoburu/pgbouncer:latest
-    ports:
-      - "6432:6432" # PgBouncer listening port
-    env_file: .pgbouncer.test.env
-    networks:
-      - khoj
+      - default
 
 networks:
-  khoj:
+  default:
 
 volumes:
   khoj_config:
